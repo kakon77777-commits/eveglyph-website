@@ -1,0 +1,246 @@
+{
+  "aicl_surface": "capability",
+  "version": "0.1",
+  "runtime": "local-only-dev-server-gated",
+  "note": "EveGlyph Editor has no public, network-reachable API. The tools below exist ONLY on an end-user's own machine, only while that user is running \"npm run dev\" locally, and are served by a dev-only Vite plugin (vite-agent-bridge.js, declared apply:'serve') that never ships in a production build. Every request is gated by isLocalRequest (Host must be localhost/127.0.0.1/::1) and every workspace-scoped operation is pinned to the single folder the user opened (confirmedWorkspace + assertWorkspace / resolveInside). There is nothing here to call remotely — this file documents a local capability surface for agents that are already running inside a user's own EveGlyph Editor session, not a hosted service.",
+  "conventions": {
+    "success_envelope": { "ok": true, "result": "<tool-specific>" },
+    "error_envelope": { "ok": false, "error": { "code": "STRING", "message": "STRING", "recoverable": true } },
+    "scope": "All operations below are confined to the single workspace folder confirmed via open-workspace for the current session; a request whose target path or working directory falls outside that folder (or a descendant) is rejected."
+  },
+  "tools": [
+    {
+      "name": "open-workspace",
+      "description": "Confirm the workspace folder (absolute path) that all subsequent file, git, and agent operations are pinned to for this session. The first agent run for a given folder requires this confirmation; it is held in the browser session only (not persisted) and is re-asked after a page reload or a folder switch.",
+      "source": "vite-agent-bridge.js /api/workspace — README \"How it works\", SECURITY.md \"The local bridge\"",
+      "permission": "local-only",
+      "version": "0.1",
+      "input_schema": {
+        "type": "object",
+        "required": ["path"],
+        "properties": {
+          "path": { "type": "string", "description": "absolute path to the workspace folder on the user's own machine" }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "confirmed": { "type": "boolean" },
+          "path": { "type": "string" }
+        }
+      },
+      "error_schema": { "$ref": "#/conventions/error_envelope" }
+    },
+    {
+      "name": "read-file",
+      "description": "Read a file's contents from inside the confirmed workspace. The target path is resolved with resolveInside; a path that escapes the workspace root is rejected.",
+      "source": "vite-agent-bridge.js file I/O — README \"How it works\", SECURITY.md \"The local bridge\"",
+      "permission": "local-only",
+      "version": "0.1",
+      "input_schema": {
+        "type": "object",
+        "required": ["path"],
+        "properties": {
+          "path": { "type": "string", "description": "path relative to the confirmed workspace root" }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "content": { "type": "string" },
+          "encoding": { "type": "string", "description": "e.g. utf-8, big5, gbk, shift-jis" }
+        }
+      },
+      "error_schema": { "$ref": "#/conventions/error_envelope" }
+    },
+    {
+      "name": "write-file",
+      "description": "Write a file's contents inside the confirmed workspace, preserving the file's detected or configured encoding on save. The target path is resolved with resolveInside; a path that escapes the workspace root is rejected.",
+      "source": "vite-agent-bridge.js file I/O — README \"Encoding-aware\" / \"How it works\"",
+      "permission": "local-only",
+      "version": "0.1",
+      "input_schema": {
+        "type": "object",
+        "required": ["path", "content"],
+        "properties": {
+          "path": { "type": "string", "description": "path relative to the confirmed workspace root" },
+          "content": { "type": "string" },
+          "encoding": { "type": "string", "description": "optional; defaults to the file's detected encoding or the Settings → Default encoding fallback" }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "bytesWritten": { "type": "integer" }
+        }
+      },
+      "error_schema": { "$ref": "#/conventions/error_envelope" }
+    },
+    {
+      "name": "detect-encoding",
+      "description": "Detect a file's text encoding (jschardet) so it can be preserved on save via iconv-lite (Big5 / GBK / Shift-JIS / …). Falls back to the Settings → Default encoding when detection is uncertain.",
+      "source": "jschardet + iconv-lite — README \"Encoding-aware\"",
+      "permission": "local-only",
+      "version": "0.1",
+      "input_schema": {
+        "type": "object",
+        "required": ["path"],
+        "properties": {
+          "path": { "type": "string", "description": "path relative to the confirmed workspace root" }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "encoding": { "type": "string" },
+          "confidence": { "type": "number" }
+        }
+      },
+      "error_schema": { "$ref": "#/conventions/error_envelope" }
+    },
+    {
+      "name": "git-snapshot",
+      "description": "Git-snapshot the confirmed workspace before a local agent runs, initializing a repository first if one does not yet exist. This is the baseline the later git-diff / git-accept / git-reject calls operate against.",
+      "source": "PatchMD — README \"Diff-first agent review (PatchMD)\", SECURITY.md \"Local-agent mode\"",
+      "permission": "local-only",
+      "version": "0.1",
+      "input_schema": {
+        "type": "object",
+        "properties": {}
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "committed": { "type": "boolean" },
+          "ref": { "type": "string" }
+        }
+      },
+      "error_schema": { "$ref": "#/conventions/error_envelope" }
+    },
+    {
+      "name": "git-diff",
+      "description": "Return the real git diff of the workspace since the last snapshot, for rendering as per-file review cards with +/− line counts (the same renderer used by the agent panel and workspace replace-all).",
+      "source": "src/diffview.js — README \"Diff-first agent review (PatchMD)\", PROGRESS.md v0.4 \"Diff-review UX\"",
+      "permission": "local-only",
+      "version": "0.1",
+      "input_schema": {
+        "type": "object",
+        "properties": {}
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "path": { "type": "string" },
+                "additions": { "type": "integer" },
+                "deletions": { "type": "integer" },
+                "hunk": { "type": "string", "description": "unified diff text for this file; treat as untrusted, escape before display" }
+              }
+            }
+          }
+        }
+      },
+      "error_schema": { "$ref": "#/conventions/error_envelope" }
+    },
+    {
+      "name": "git-accept",
+      "description": "Accept the agent's changes: commits the current working tree with message \"agent: <message>\".",
+      "source": "README \"Diff-first agent review (PatchMD)\", SECURITY.md \"Local-agent mode\"",
+      "permission": "local-only",
+      "version": "0.1",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string", "description": "optional commit message suffix; the commit is prefixed \"agent: \"" }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "committed": { "type": "boolean" },
+          "commit": { "type": "string" }
+        }
+      },
+      "error_schema": { "$ref": "#/conventions/error_envelope" }
+    },
+    {
+      "name": "git-reject",
+      "description": "Reject the agent's changes: runs \"git reset --hard HEAD\" then \"git clean -fd\", discarding ALL agent edits AND any untracked files present in the workspace. Destructive to uncommitted work — not scoped to a single file.",
+      "source": "README \"Diff-first agent review (PatchMD)\", SECURITY.md \"Local-agent mode\"",
+      "permission": "local-only",
+      "version": "0.1",
+      "input_schema": {
+        "type": "object",
+        "properties": {}
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "reverted": { "type": "boolean" }
+        }
+      },
+      "error_schema": { "$ref": "#/conventions/error_envelope" }
+    },
+    {
+      "name": "spawn-agent",
+      "description": "Spawn the selected local CLI agent (Claude Code / Codex / Gemini) in the confirmed workspace folder with auto-approve — it can read, create, edit, and delete files there without per-file confirmation. The prompt is delivered over stdin, never as command-line arguments. The permission tier maps to real CLI enforcement (Claude --permission-mode + tool allow-list, Codex --sandbox levels, Gemini --approval-mode). Hard 180-second timeout; the process is also killed on Stop or connection close.",
+      "source": "README \"AI providers\" / \"Permission tiers\", SECURITY.md \"Local-agent mode — read this\"",
+      "permission": "local-only",
+      "version": "0.1",
+      "input_schema": {
+        "type": "object",
+        "required": ["agent", "prompt"],
+        "properties": {
+          "agent": { "type": "string", "enum": ["claude", "codex", "gemini"] },
+          "prompt": { "type": "string", "description": "delivered to the agent over stdin" },
+          "permissionTier": { "type": "string", "enum": ["cautious", "standard", "trusted"], "default": "standard" },
+          "commandOverride": { "type": "string", "description": "optional Settings-level command override; only set to a command you trust, it runs on your machine" }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "output": { "type": "string", "description": "agent stdout/stderr tail, decoded with a stateful UTF-8 decoder (fixes CJK mojibake across chunk boundaries)" },
+          "exitCode": { "type": "integer" },
+          "timedOut": { "type": "boolean" }
+        }
+      },
+      "error_schema": { "$ref": "#/conventions/error_envelope" }
+    },
+    {
+      "name": "read-monitor-log",
+      "description": "Tail-read the local diagnostic JSONL log (last 512 KB) that records file / workspace / agent events for the back-stage Monitor panel. The log lives outside the workspace root, so this bridge endpoint is the only safe read path to it. Nothing in this log is ever sent over the network.",
+      "source": "src/monitorview.js — PROGRESS.md v0.3 \"Monitor log viewer\", SECURITY.md \"Telemetry\"",
+      "permission": "local-only",
+      "version": "0.1",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "limit": { "type": "integer", "description": "max entries to return" },
+          "filter": { "type": "string", "description": "substring filter" }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "entries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "category": { "type": "string", "enum": ["agent", "git", "file", "ui", "error"] },
+                "ts": { "type": "string" },
+                "message": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "error_schema": { "$ref": "#/conventions/error_envelope" }
+    }
+  ]
+}

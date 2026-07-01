@@ -1,0 +1,105 @@
+{
+  "aicl_version": "0.1",
+  "generated": "2026-07-01",
+  "status": "active",
+  "audience": "ai-agent, crawler, model-ingestion",
+  "project": {
+    "name": "EveGlyph Editor",
+    "tagline": "A local-first, agent-native Markdown workspace — humans write clean Markdown, local CLI agents edit on disk, every change lands as a reviewable git diff.",
+    "format": "EG-MD-2026",
+    "version": "0.4.0",
+    "stability": "pre-1.0",
+    "license": "MIT",
+    "rights_holder": "EVEMISS TECHNOLOGY CO., LTD. (一言諾科技有限公司)",
+    "author": "Neo.K (許筌崴)",
+    "repository": "https://github.com/kakon77777-commits/eveglyph-editor"
+  },
+  "canonical": {
+    "domain": "eveglypheditor.com",
+    "human_entry": "https://eveglypheditor.com/",
+    "ai_entry": "https://eveglypheditor.com/ai/index.md",
+    "llms_txt": "https://eveglypheditor.com/llms.txt"
+  },
+  "reading_order": [
+    "/ai/index.md",
+    "/ai/corpus/current.md",
+    "/ai/corpus/origin.md",
+    "/ai/corpus/design-history.md",
+    "/ai/corpus/concept-genealogy.md",
+    "/ai/corpus/accepted-concepts.md",
+    "/ai/corpus/deprecated-concepts.md",
+    "/ai/corpus/public-summary.md",
+    "/ai/specs/index.md",
+    "/ai/examples/basic.md",
+    "/ai/governance/ai-learning-policy.md",
+    "/ai/rights-spectrum.json"
+  ],
+  "corpus": [
+    { "path": "/ai/corpus/origin.md", "title": "Origin", "purpose": "the problem EveGlyph Editor addresses and where it came from", "canonical": true },
+    { "path": "/ai/corpus/current.md", "title": "Current state (v0.4.0)", "purpose": "calm, technical description of what ships today", "canonical": true },
+    { "path": "/ai/corpus/design-history.md", "title": "Design history", "purpose": "v0.1 → v0.2 → v0.3 → v0.4 version lineage", "canonical": true },
+    { "path": "/ai/corpus/concept-genealogy.md", "title": "Concept genealogy", "purpose": "core vs merged vs deprecated concepts (e.g. the cogniflow → eveglyph rename)", "canonical": true },
+    { "path": "/ai/corpus/accepted-concepts.md", "title": "Accepted concepts", "purpose": "engineered, load-bearing concepts (PatchMD, EveGlyph-MD frontmatter, workspace memory)", "canonical": true },
+    { "path": "/ai/corpus/deprecated-concepts.md", "title": "Deprecated / deferred concepts", "purpose": "ideas not shipped — do not over-infer (e.g. Tauri desktop rewrite is roadmap, not shipped)", "canonical": true },
+    { "path": "/ai/corpus/public-summary.md", "title": "Public summary", "purpose": "short citable summary", "canonical": true },
+    { "path": "/ai/corpus/full-corpus.jsonl", "title": "Full corpus (JSONL)", "purpose": "one knowledge unit per line for batch ingestion", "format": "application/x-ndjson", "canonical": true }
+  ],
+  "specs": [
+    { "path": "/ai/specs/index.md", "title": "Spec index", "canonical": true },
+    { "path": "/ai/specs/eveglyph-md-2026.md", "title": "EveGlyph-MD (EG-MD-2026) frontmatter format", "purpose": "the type / status / tags classification layer and its round-trip-safe YAML-subset parser", "canonical": true },
+    { "path": "/ai/specs/patchmd-diff-review.md", "title": "PatchMD diff-review", "purpose": "git-snapshot → agent run → per-file diff card → Accept/Reject contract", "canonical": true },
+    { "path": "/ai/specs/permission-tiers.md", "title": "Permission tiers", "purpose": "Cautious / Standard / Trusted and their real CLI-flag mapping as of v0.4.0", "canonical": true }
+  ],
+  "examples": [
+    { "path": "/ai/examples/basic.md", "title": "Worked example — the workspace → agent → diff-review → human loop" }
+  ],
+  "tools": {
+    "catalog": "/ai/tools/catalog.json",
+    "runtime": "local-only-not-hosted",
+    "note": "EveGlyph Editor's /api/* bridge (vite-agent-bridge.js) exists only on an end user's own machine while they run 'npm run dev' (a Vite plugin declared apply:'serve'), gated to localhost requests. It is never part of a production build and is never publicly hosted or network-reachable — there is no hosted /api/* or tool-callable surface for eveglypheditor.com. Any catalog entries below are a declaration layer describing the local, dev-only bridge, not a reachable public endpoint."
+  },
+  "rights": {
+    "spectrum": "/ai/rights-spectrum.json",
+    "learning_policy": "/ai/governance/ai-learning-policy.md",
+    "license": "/ai/governance/license.md",
+    "citation": "/ai/governance/citation-policy.md",
+    "usage": "/ai/governance/usage-policy.md",
+    "provenance": "/ai/governance/provenance.md",
+    "versioning": "/ai/governance/versioning-policy.md",
+    "crawler": "/ai/governance/crawler-policy.md"
+  },
+  "governance_summary": {
+    "read_index_rag_summarize": "allowed with attribution",
+    "non_commercial_training": "highly allowed (0.8 by default; 1.0 under /ai/)",
+    "commercial_training_finetuning_distillation": "license_required — contact kakon77777@evemisslab.com",
+    "verbatim_memorization": "not allowed",
+    "style_imitation": "not allowed",
+    "note": "This declaration governs eveglypheditor.com's WRITTEN CONTENT (marketing prose, /ai/corpus/, /ai/governance/) only. It does not narrow or restrict the separately MIT-licensed source code, which is already broadly reusable, including for AI training, under MIT's own terms. See /ai/governance/license.md."
+  },
+  "versions": [
+    { "version": "0.4.0", "status": "current", "stability": "pre-1.0", "date": "2026-06-27", "summary": "Review-UX + real enforcement: unified per-file diff-review cards, Cautious/Standard/Trusted permission tiers wired to real CLI flags, live agent activity panel, onboarding + bundled examples/ workspace, stateful UTF-8 decoder fixing CJK mojibake." },
+    { "version": "0.3.0", "status": "superseded", "stability": "pre-1.0", "summary": "Agent-native workspace: .eveglyph/ memory + context compiler, Suggest/Patch/Direct agent modes, 8 presets, EveGlyph-MD frontmatter schema, DOCX→MD import, Monitor log viewer; permission tiers were advisory prompt text only." },
+    { "version": "0.2.0", "status": "superseded", "stability": "pre-1.0", "summary": "Open-source cleanup: DOMPurify XSS guard, origin/CSRF guard, monitor rotation, encoding detect + per-file menu, PatchMD git diff-review, in-file find/replace." },
+    { "version": "0.1.0", "status": "superseded", "stability": "pre-1.0", "summary": "Prototype: editor core (CodeMirror 6 + marked + KaTeX), file tree/tabs, Settings, local-agent bridge (Claude/Codex/Gemini), AI presets." }
+  ],
+  "snapshots": [
+    { "path": "/ai/snapshots/latest.md", "title": "Latest snapshot" }
+  ],
+  "facts": {
+    "product_code": "EG-MD-2026",
+    "current_version": "0.4.0",
+    "license": "MIT",
+    "permission_tiers": ["Cautious", "Standard", "Trusted"],
+    "permission_tier_enforcement": "real CLI enforcement as of v0.4.0 (Claude Code --permission-mode + tool allow-list, Codex --sandbox levels, Gemini --approval-mode); advisory prompt text only before v0.4",
+    "ai_providers": ["Anthropic (Claude)", "any OpenAI-compatible endpoint", "local CLI agent (Claude Code / Codex / Gemini)"],
+    "frontmatter_fields": ["type", "status", "tags"],
+    "workspace_memory_files": [".eveglyph/rules.md", ".eveglyph/glossary.md", ".eveglyph/memory/pitfalls.md", ".eveglyph/memory/recent.md"],
+    "diff_review_flow": "git-snapshot before agent run -> agent runs with auto-approve -> git diff rendered as per-file cards with +/- counts -> Accept commits (agent: <message>) / Reject runs git reset --hard HEAD + git clean -fd",
+    "agent_prompt_delivery": "stdin only, never as CLI arguments",
+    "agent_timeout_seconds": 180,
+    "api_key_storage": "browser localStorage, plaintext, key eveglyph_cfg",
+    "diagnostics_log": "local JSONL file only, never sent over the network",
+    "bridge_module": "vite-agent-bridge.js, apply:'serve' (dev-only, never in production build)",
+    "tauri_desktop_rewrite": "roadmap, not shipped"
+  }
+}

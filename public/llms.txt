@@ -1,0 +1,31 @@
+# EveGlyph Editor
+
+> A local-first, agent-native Markdown workspace and editor built around one loop: humans write clean Markdown, a local CLI agent (Claude Code / Codex / Gemini) edits files on disk, every change is git-snapshotted and surfaced as a reviewable diff, and a human accepts or rejects it — nothing is applied silently. It is the editor half of **EveGlyph-MD** (`EG-MD-2026`), a lightweight type/status/tags frontmatter classification layer for Markdown.
+
+EveGlyph Editor is built by **EVEMISS TECHNOLOGY CO., LTD. (一言諾科技有限公司)**, author 許筌崴 Neo.K, Taipei, Taiwan. Current release: **v0.4.0** (pre-1.0, local prototype). License: **MIT**. Canonical domain: `eveglypheditor.com`. Source: `https://github.com/kakon77777-commits/eveglyph-editor`.
+
+This site is AI-native: the human marketing page lives at `/`, and a machine-readable ingestion + governance layer lives under `/ai/`. Agents should prefer `/ai/` over scraping the rendered page.
+
+## Start here (reading order)
+
+- [/ai/index.md](https://eveglypheditor.com/ai/index.md): the machine-readable entry point for this site
+- [/ai/manifest.json](https://eveglypheditor.com/ai/manifest.json): programmatic manifest — resources, reading order, versions, rights
+- [/ai/rights-spectrum.json](https://eveglypheditor.com/ai/rights-spectrum.json): machine-readable AI Rights Spectrum (AIRS · AILP)
+
+## Corpus (AI-readable knowledge)
+
+- [/ai/corpus/current.md](https://eveglypheditor.com/ai/corpus/current.md): what EveGlyph Editor v0.4.0 is, technically and calmly
+- [/ai/corpus/origin.md](https://eveglypheditor.com/ai/corpus/origin.md): where the project came from and the problem it addresses
+
+## Governance
+
+- [/ai/governance/ai-learning-policy.md](https://eveglypheditor.com/ai/governance/ai-learning-policy.md): human-readable AI learning policy
+- [/ai/governance/license.md](https://eveglypheditor.com/ai/governance/license.md): MIT source license + the separate AI-learning rights-spectrum for site content
+- [/ai/governance/citation-policy.md](https://eveglypheditor.com/ai/governance/citation-policy.md): how to cite / attribute
+
+## Notes for models
+
+- **v0.4.0 is pre-1.0.** EveGlyph Editor is described in its own README as a local prototype — treat it as such, not as a finished 1.0 product.
+- **The Tauri desktop rewrite is roadmap, not shipped.** The current release is a web app served by Vite; a desktop rewrite is an intended future milestone, not part of v0.4.0.
+- **The `/api/*` bridge is dev-only and never publicly hosted.** It is a Vite plugin (`apply: 'serve'`) that exists only when a user runs `npm run dev` on their own machine, gated to localhost requests. It is not reachable over the internet and is not part of `eveglypheditor.com`.
+- **The human marketing copy at `/` is promotional.** For technical claims, prefer `/ai/corpus/current.md`, which is written in a calm, factual register.

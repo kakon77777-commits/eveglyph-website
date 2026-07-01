@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Cloudflare / wrangler
+.wrangler/
+
+# Local env & secrets
+.env
+.env.*
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Claude Code local overrides (launch.json is kept tracked as shared config)
+.claude/settings.local.json
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.log

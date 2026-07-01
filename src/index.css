@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+/* EveGlyph Editor design tokens — "code dark + run green" (ui-ux-pro-max).
+   Tailwind v4 @theme → utilities: bg-canvas, bg-panel, text-ink, text-accent, … */
+@theme {
+  --color-canvas: #0F172A;   /* page background */
+  --color-panel: #1E293B;    /* surfaces / cards */
+  --color-panel-2: #334155;  /* raised surfaces / borders */
+  --color-accent: #22C55E;   /* run-green CTA / highlights */
+  --color-accent-dim: #16A34A;
+  --color-ink: #F8FAFC;      /* primary text */
+  --color-muted: #94A3B8;    /* secondary text */
+  --color-line: #233143;     /* hairline borders */
+
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: rgba(34, 197, 94, 0.25); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* ── CodeMirror host (demo) ── */
+.demo-editor .cm-editor { height: 100%; background: transparent; }
+.demo-editor .cm-scroller { padding: 6px 0; }
+
+/* ── Rendered Markdown preview (demo) ── */
+.preview { font-size: 14px; line-height: 1.7; }
+.preview > *:first-child { margin-top: 0; }
+.preview h1 { font-family: var(--font-mono); font-size: 1.5rem; font-weight: 600; margin: 0 0 .6em; color: var(--color-ink); }
+.preview h2 { font-family: var(--font-mono); font-size: 1.2rem; font-weight: 600; margin: 1.4em 0 .5em; color: var(--color-ink); }
+.preview h3 { font-family: var(--font-mono); font-size: 1.02rem; font-weight: 600; margin: 1.2em 0 .4em; color: var(--color-ink); }
+.preview p { margin: 0 0 1em; color: #cbd5e1; }
+.preview a { color: var(--color-accent); text-decoration: underline; text-underline-offset: 2px; }
+.preview ul, .preview ol { margin: 0 0 1em; padding-left: 1.3em; color: #cbd5e1; }
+.preview li { margin: .25em 0; }
+.preview strong { color: var(--color-ink); font-weight: 600; }
+.preview em { color: #e2e8f0; }
+.preview code { font-family: var(--font-mono); font-size: .85em; background: var(--color-panel-2); padding: .12em .4em; border-radius: 4px; color: var(--color-ink); }
+.preview pre { background: #0b1220; border: 1px solid var(--color-line); border-radius: 8px; padding: .9em 1em; overflow: auto; margin: 0 0 1em; }
+.preview pre code { background: none; padding: 0; }
+.preview blockquote { border-left: 2px solid var(--color-line); margin: 0 0 1em; padding-left: 1em; color: var(--color-muted); }
+.preview hr { border: 0; border-top: 1px solid var(--color-line); margin: 1.5em 0; }
+.preview table { border-collapse: collapse; width: 100%; margin: 0 0 1em; font-size: .9em; }
+.preview th, .preview td { border: 1px solid var(--color-line); padding: .4em .7em; text-align: left; }
+.preview th { background: var(--color-panel-2); color: var(--color-ink); }
+
+/* frontmatter badges */
+.fm-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.2em; padding-bottom: 1em; border-bottom: 1px solid var(--color-line); }
+.fmb { font-family: var(--font-mono); font-size: 11px; padding: 2px 8px; border-radius: 6px; border: 1px solid var(--color-line); }
+.fmb-type { color: var(--color-accent); }
+.fmb-status { color: #7dd3fc; }
+.fmb-tag { color: var(--color-muted); }
+.fmb-bad { color: #fca5a5; border-color: #fca5a5; }
+
+/* ::: callouts */
+.cal { border: 1px solid var(--color-line); border-left: 3px solid var(--color-accent); border-radius: 8px; padding: .8em 1em; margin: 0 0 1em; background: rgba(30, 41, 59, 0.5); }
+.cal-l { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--color-accent); margin-bottom: .5em; }
+.cal-warning { border-left-color: #febc2e; }
+.cal-warning .cal-l { color: #febc2e; }
+.cal p:last-child { margin-bottom: 0; }
+
+/* KaTeX display blocks shouldn't overflow the narrow demo column */
+.preview .katex-display { overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
